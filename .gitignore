@@ -1,0 +1,11 @@
+*.jpg
+*.JPG
+*.qws
+**/db
+*.vwf
+*.bak
+*.rpt
+output_files/
+simulation/
+db/
+incremental_db/
