@@ -8,4 +8,14 @@
 output_files/
 simulation/
 db/
-incremental_db/
+incremental_db
+.metadata/
+.qsys_edit/
+lab8.*
+*.qarlog
+lab8_soc.*
+lab7_usb.qsf
+lab8_assignment_defaults.qdf
+PLLJ_PLLSPE_INFO.txt
+RemoteSystemsTempFiles/
+software_codes/
