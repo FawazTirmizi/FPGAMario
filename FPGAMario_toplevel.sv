@@ -39,6 +39,8 @@ module FPGAMario_toplevel (
 	 logic [9:0] DrawX, DrawY;
     logic frame_clk;
 	 
+    logic [2:0] blockID;
+    
 	 //assign new_frame = DrawX & DrawY;
 	 
     assign Clk = CLOCK_50;
@@ -112,16 +114,12 @@ module FPGAMario_toplevel (
     // Which signal should be frame_clk?
     ball ball_instance(.Clk, .Reset(Reset_h), .frame_clk, .DrawX, .DrawY, .keycode({2'h00, keycode}), .is_ball);
     
-    color_mapper color_instance(.is_ball, .DrawX, .DrawY, .VGA_R, .VGA_G, .VGA_B);
+    color_mapper color_instance(.is_ball, .DrawX, .DrawY, .VGA_R, .VGA_G, .VGA_B, .blockID);
+    
+    block_array block_instance(.Clk, .Reset(Reset_h), .drawX(DrawX), .drawY(DrawY), .block_id_out(blockID));
     
     // Display keycode on hex display
     HexDriver hex_inst_0 (keycode[3:0], HEX0);
     HexDriver hex_inst_1 (keycode[7:4], HEX1);
     
-    /**************************************************************************************
-        ATTENTION! Please answer the following quesiton in your lab report! Points will be allocated for the answers!
-        Hidden Question #1/2:
-        What are the advantages and/or disadvantages of using a USB interface over PS/2 interface to
-             connect to the keyboard? List any two.  Give an answer in your Post-Lab.
-    **************************************************************************************/
 endmodule
