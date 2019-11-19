@@ -25,10 +25,10 @@ module  ball (
     
    parameter [9:0] Ball_X_Center = 10'd320;  // Center position on the X axis
    parameter [9:0] Ball_Y_Center = 10'd240;  // Center position on the Y axis
-   parameter [9:0] Ball_X_Min = 10'd0;       // Leftmost point on the X axis
-   parameter [9:0] Ball_X_Max = 10'd639;     // Rightmost point on the X axis
-   parameter [9:0] Ball_Y_Min = 10'd0;       // Topmost point on the Y axis
-   parameter [9:0] Ball_Y_Max = 10'd479;     // Bottommost point on the Y axis
+   parameter [9:0] Ball_X_Min = 10'd120;       // Leftmost point on the X axis
+   parameter [9:0] Ball_X_Max = 10'd519;     // Rightmost point on the X axis
+   parameter [9:0] Ball_Y_Min = 10'd40;       // Topmost point on the Y axis
+   parameter [9:0] Ball_Y_Max = 10'd439;     // Bottommost point on the Y axis
    parameter [9:0] Ball_X_Step = 10'd1;      // Step size on the X axis
    parameter [9:0] Ball_Y_Step = 10'd1;      // Step size on the Y axis
    parameter [9:0] Ball_Size = 10'd4;        // Ball size
@@ -49,7 +49,7 @@ module  ball (
    // Update registers
    always_ff @ (posedge Clk) begin
       if (Reset) begin
-         Ball_X_Pos <= (Ball_X_Max / 2);
+         Ball_X_Pos <= ((Ball_X_Max + Ball_X_Min) / 2);
          Ball_Y_Pos <= Ball_Y_Max - Ball_Size;
          Ball_X_Motion <= 10'd0;
          Ball_Y_Motion <= 10'd0;

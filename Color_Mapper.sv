@@ -30,20 +30,28 @@ module  color_mapper ( input              is_ball,            // Whether current
     // Assign color based on is_ball signal
     always_comb
     begin
-        if (is_ball == 1'b1) 
-        begin
-            // White ball
-            Red = 8'hff;
-            Green = 8'hff;
-            Blue = 8'hff;
-        end
-        else 
-        begin
-            // Background with nice color gradient
-            Red = 8'h3f; 
-            Green = 8'h00;
-            Blue = 8'h7f - {1'b0, DrawX[9:3]};
-        end
+      if (DrawX < 120 || DrawX > 520 || DrawY < 40 || DrawY > 440) begin
+         Red = 8'h00;
+         Green = 8'h00;
+         Blue = 8'h00;
+      end
+      else if (DrawX % 40 == 0 || DrawY % 40 == 0) begin
+         Red = 8'hff;
+         Green = 8'h80;
+         Blue = 8'h00;
+      end
+      else if (is_ball == 1'b1) begin
+         // White ball
+         Red = 8'hff;
+         Green = 8'hff;
+         Blue = 8'hff;
+      end
+      else begin
+         // Background with nice color gradient
+         Red = 8'h3f; 
+         Green = 8'h00;
+         Blue = 8'h7f - {1'b0, DrawX[9:3]};
+      end
     end 
     
 endmodule

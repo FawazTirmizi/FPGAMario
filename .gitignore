@@ -10,7 +10,6 @@ simulation/
 db/
 incremental_db
 .metadata/
-.qsys_edit/
 lab8.*
 *.qarlog
 lab8_soc.*
