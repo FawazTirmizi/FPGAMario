@@ -9,7 +9,6 @@ output_files/
 simulation/
 db/
 incremental_db
-.metadata/
 lab8.*
 *.qarlog
 lab8_soc.*
