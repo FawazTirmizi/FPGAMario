@@ -29,10 +29,11 @@ module block_array (
 			end
          
          // TESTING ENVIRONMENT; COMMENT OUT WHEN USING MEMORY
-         blockCols[5][29:27] <= 3'b001;   // Draws 3 breakable bricks in a stair
-         blockCols[6][29:27] <= 3'b001;
-         blockCols[6][26:24] <= 3'b001;   
-         blockCols[0][2:0] <= 3'b011;     // Draws question block
+         blockCols[6][29:27]  <= 3'b001;   // Draws 3 breakable bricks in a stair
+         blockCols[7][29:27]  <= 3'b001;
+         blockCols[7][26:24]  <= 3'b001;   
+         blockCols[0][2:0]    <= 3'b011;     // Draws question block
+         blockCols[4][20:18]  <= 3'b110;
          // END TEST
 		end
 		else if (Shift) begin

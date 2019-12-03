@@ -35,7 +35,7 @@ module FPGAMario_toplevel (
    logic Reset_h, Clk;
    logic [7:0] keycode;
     
-   logic is_mario;
+   logic is_mario, Shift;
 	logic [9:0] DrawX, DrawY;
    logic frame_clk;
 	 
@@ -118,14 +118,14 @@ module FPGAMario_toplevel (
     
    // Which signal should be frame_clk?   
    Mario mario_instance(.Clk, .Reset(Reset_h), .frame_clk, .DrawX, .DrawY, 
-                     .keycode({2'h00, keycode}), .is_mario, 
+                     .keycode({2'h00, keycode}), .is_mario, .Shift,
                      .Mario_X_Pos, .Mario_Y_Pos,
                      .mario_poll_up, .mario_poll_down, .mario_poll_left, .mario_poll_right);
     
    color_mapper color_instance(.is_ball(is_mario), .DrawX, .DrawY, .VGA_R, .VGA_G, .VGA_B, .blockID);
     
    block_array block_instance(.Clk, .Reset(Reset_h), .drawX(DrawX), .drawY(DrawY), .block_id_out(blockID), 
-                              .new_block_id(30'b0), .Mario_X_Pos, .Mario_Y_Pos,
+                              .new_block_id(30'b0), .Mario_X_Pos, .Mario_Y_Pos, .Shift,
                               .mario_poll_up, .mario_poll_down, .mario_poll_left, .mario_poll_right);
    
    // Display keycode on hex display

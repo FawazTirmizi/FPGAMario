@@ -15,19 +15,22 @@
 
 
 module  ball ( 
-					input         Clk,                // 50 MHz clock
-                             Reset,              // Active-high reset signal
-                             frame_clk,          // The clock indicating a new frame (~60Hz)
-               input [9:0]   DrawX, DrawY,       // Current pixel coordinates
-					input [15:0]  keycode,
-               output logic  is_ball             // Whether current pixel belongs to ball or background
+					input                Clk,                // 50 MHz clock
+                                    Reset,              // Active-high reset signal
+                                    frame_clk,          // The clock indicating a new frame (~60Hz)
+               input [9:0]          DrawX, DrawY,       // Current pixel coordinates
+					input [15:0]         keycode,
+               input [2:0]          ball_poll_block_id,
+               
+               output logic [9:0]   ball_X_poll, ball_Y_poll,
+               output logic         is_ball             // Whether current pixel belongs to ball or background
 );
     
    parameter [9:0] Ball_X_Center = 10'd320;  // Center position on the X axis
    parameter [9:0] Ball_Y_Center = 10'd240;  // Center position on the Y axis
-   parameter [9:0] Ball_X_Min = 10'd120;       // Leftmost point on the X axis
+   parameter [9:0] Ball_X_Min = 10'd120;     // Leftmost point on the X axis
    parameter [9:0] Ball_X_Max = 10'd519;     // Rightmost point on the X axis
-   parameter [9:0] Ball_Y_Min = 10'd40;       // Topmost point on the Y axis
+   parameter [9:0] Ball_Y_Min = 10'd40;      // Topmost point on the Y axis
    parameter [9:0] Ball_Y_Max = 10'd439;     // Bottommost point on the Y axis
    parameter [9:0] Ball_X_Step = 10'd1;      // Step size on the X axis
    parameter [9:0] Ball_Y_Step = 10'd1;      // Step size on the Y axis
@@ -49,7 +52,7 @@ module  ball (
    // Update registers
    always_ff @ (posedge Clk) begin
       if (Reset) begin
-         Ball_X_Pos <= ((Ball_X_Max + Ball_X_Min) / 2);
+         Ball_X_Pos <= (Ball_X_Min + 10'd20);
          Ball_Y_Pos <= Ball_Y_Max - Ball_Size;
          Ball_X_Motion <= 10'd0;
          Ball_Y_Motion <= 10'd0;
@@ -77,57 +80,35 @@ module  ball (
       Ball_Y_Motion_in = Ball_Y_Motion;
 		Jump_Counter_in = Jump_Counter;
 		Falling_in = Falling;
-        
+      ball_X_poll = Ball_X_Pos;
+      ball_Y_poll = Ball_Y_Pos;
+      
       // Update position and motion only at rising edge of frame clock
       if (frame_clk_rising_edge) begin
          // Be careful when using comparators with "logic" datatype because compiler treats 
          //   both sides of the operator as UNSIGNED numbers.
          // e.g. Ball_Y_Pos - Ball_Size <= Ball_Y_Min 
          // If Ball_Y_Pos is 0, then Ball_Y_Pos - Ball_Size will not be -4, but rather a large positive number.
-         /*
-			if( Ball_Y_Pos + Ball_Size >= Ball_Y_Max ) begin // Ball is at the bottom edge, BOUNCE!
-            Ball_Y_Motion_in = (~(Ball_Y_Step) + 1'b1);  // 2's complement.
-            Ball_X_Motion_in = 1'b0;
-			end
-         else if ( Ball_Y_Pos <= Ball_Y_Min + Ball_Size ) begin // Ball is at the top edge, BOUNCE!
-            Ball_Y_Motion_in = Ball_Y_Step;
-            Ball_X_Motion_in = 1'b0;
-         end
-			// TODO: Add other boundary detections and handle keypress here.
-			if (Ball_X_Pos + Ball_Size >= Ball_X_Max ) begin
-				Ball_X_Motion_in = (~(Ball_X_Step) + 1'b1);
-            Ball_Y_Motion_in = 1'b0;
-			end
-			else if (Ball_X_Pos <= Ball_X_Min + Ball_Size ) begin
-				Ball_X_Motion_in = Ball_X_Step;
-            Ball_Y_Motion_in = 1'b0;
-			end
-			*/
 			
 			if( Ball_Y_Pos + Ball_Size >= Ball_Y_Max ) begin // Ball is at the bottom edge
             Ball_Y_Motion_in = 1'b0;
 				Falling_in = 1'b0;
-				
-            //Ball_X_Motion_in = 1'b0;
 			end
 			
-			if (Ball_X_Pos + Ball_Size >= Ball_X_Max ) begin
+			if (Ball_X_Pos + Ball_Size >= Ball_X_Max ) begin // Ball is at right edge
 				Ball_X_Motion_in = 1'b0;
-            //Ball_Y_Motion_in = 1'b0;
 			end
-			else if (Ball_X_Pos <= Ball_X_Min + Ball_Size ) begin
+			else if (Ball_X_Pos <= Ball_X_Min + Ball_Size ) begin // Ball is at left edge
 				Ball_X_Motion_in = 1'b0;
-            //Ball_Y_Motion_in = 1'b0;
 			end
 			
 			if((keycode !=16'h001A) && (Ball_Y_Pos + Ball_Size >= Ball_Y_Max )) begin // Ball is at the bottom edge
             Ball_Y_Motion_in = 1'b0;
 				Falling_in = 1'b0;
 				Jump_Counter_in = 1'b0;
-            //Ball_X_Motion_in = 1'b0;
 			end
 			else begin
-				if (Jump_Counter == 5'b11111) begin
+				if (Jump_Counter == 6'b111111) begin
 					Ball_Y_Motion_in = Ball_Y_Step;
 					Falling_in = 1'b1;
 				end
@@ -144,39 +125,31 @@ module  ball (
 			case (keycode)
 				16'h0004: begin // A
 					Ball_X_Motion_in = (~(Ball_X_Step) + 1'b1);
-					//Ball_Y_Motion_in = 16'h0000;
+               ball_X_poll = Ball_X_Pos - Ball_Size - 1'b1;
 				end
 				16'h0007: begin // D
 					Ball_X_Motion_in = Ball_X_Step;
-					//Ball_Y_Motion_in = 16'h0000;
+               ball_X_poll = Ball_X_Pos + Ball_Size + 1'b1;
 				end
 				16'h0016: begin // S
-					//Ball_X_Motion_in = 16'h0000;
-					//Ball_Y_Motion_in = Ball_Y_Step;
 				end
 				16'h001A: begin // W
 					if (Jump_Counter == 1'b0) begin
 						Ball_Y_Motion_in = (~(Ball_Y_Step) + 1'b1);
 						Jump_Counter_in = 5'b00001;
+                  ball_Y_poll = Ball_Y_Pos - Ball_Size - 1'b1;
 					end
-					//Ball_X_Motion_in = 16'h0000;
-					//Ball_Y_Motion_in = (~(Ball_Y_Step) + 1'b1);
 				end
 				default : begin
 					Ball_X_Motion_in = 16'h0000;
-					//Ball_Y_Motion_in = 16'h0000;
 				end
-				/*
-					default: begin
-					Ball_X_Motion_in = Ball_X_Motion;
-					Ball_Y_Motion_in = Ball_Y_Motion;
-				end
-				*/
 			endcase
 			
          // Update the ball's position with its motion
-         Ball_X_Pos_in = Ball_X_Pos + Ball_X_Motion;
-         Ball_Y_Pos_in = Ball_Y_Pos + Ball_Y_Motion;
+         if (ball_poll_block_id == 3'b000) begin
+            Ball_X_Pos_in = Ball_X_Pos + Ball_X_Motion;
+            Ball_Y_Pos_in = Ball_Y_Pos + Ball_Y_Motion;
+         end
       end
    end
    
