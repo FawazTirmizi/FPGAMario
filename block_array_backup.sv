@@ -4,18 +4,18 @@ module block_array (
 	input	logic[29:0] new_block_id,
    
 	input logic [9:0] drawX, drawY,
-   input logic [9:0] Mario_X_Pos, Mario_Y_Pos,
+   input logic [9:0] ball_X_poll, ball_Y_poll,
    
-   output logic [2:0] mario_poll_up, mario_poll_down, mario_poll_left, mario_poll_right,
+   output logic[2:0] ball_poll_block_id_out,
    output logic[2:0] block_id_out
+	
+	//output logic [7:0] VGA_R, VGA_G, VGA_B;
+
 );
 	
 	logic [39:0] 	blockXPixel, blockYPixel;
 	logic	[9:0]		blockX, blockY;
-	
-   logic [9:0]    Mario_blockX, Mario_blockY;
-   logic [9:0]    Mario_block_up, Mario_block_down, Mario_block_left, Mario_block_right;
-   logic [4:0]    Mario_blockY_lower, Mario_block_up_lower, Mario_block_down_lower;
+	logic [9:0]    ball_blockX, ball_blockY;
    
 	logic [9:0][29:0] blockCols;
 	
@@ -56,23 +56,10 @@ module block_array (
    end
 	
    always_comb begin
-      // Get the block coordinates of Mario
-      Mario_blockX = (Mario_X_Pos - 8'h78) / 8'h28;
-      Mario_blockY = (Mario_Y_Pos - 8'h28) / 8'h28;
-      Mario_blockY_lower = 3 * Mario_blockY;
-      
-      // Get the Y or X value of the block in whatever direction 
-      Mario_block_up    = (Mario_Y_Pos - 10'd20 - 8'h28) / 8'h28;
-      Mario_block_down  = (Mario_Y_Pos + 10'd20 - 8'h28) / 8'h28;
-      Mario_block_left  = (Mario_X_Pos - 10'd20 - 8'h78) / 8'h28;
-      Mario_block_right = (Mario_X_Pos + 10'd20 - 8'h78) / 8'h28;
-      
-      Mario_block_up_lower = 3 * Mario_block_up;
-      Mario_block_down_lower = 3 * Mario_block_down;
-      
-      mario_poll_up     = blockCols[Mario_blockX][Mario_block_up_lower+:3];
-      mario_poll_down   = blockCols[Mario_blockX][Mario_block_down_lower+:3];
-      mario_poll_left   = blockCols[Mario_block_left][Mario_blockY_lower+:3];
-      mario_poll_right  = blockCols[Mario_block_right][Mario_blockY_lower+:3];
+      ball_blockX = (ball_X_poll - 8'h78) / 8'h28;
+      ball_blockY = (ball_Y_poll - 8'h28) / 8'h28;
+      ball_block_Y_lower = 3 * ball_blockY;
+      //block_Y_upper = (3 * (blockY + 1)) - 1;
+      ball_poll_block_id_out = blockCols[ball_blockX][ball_block_Y_lower+:3];
    end
 endmodule

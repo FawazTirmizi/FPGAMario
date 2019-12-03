@@ -60,7 +60,6 @@
                 </children>
               </children>
               <children xsi:type="basic:PartStack" xmi:id="_g_bJcAfCEeqIB8EpHX9WiQ" elementId="bottom" containerData="2500" selectedElement="_g_bJcwfCEeqIB8EpHX9WiQ">
-                <tags>noFocus</tags>
                 <tags>active</tags>
                 <children xsi:type="advanced:Placeholder" xmi:id="_g_bJcQfCEeqIB8EpHX9WiQ" elementId="org.eclipse.ui.views.ProblemView" ref="_g_bK1gfCEeqIB8EpHX9WiQ"/>
                 <children xsi:type="advanced:Placeholder" xmi:id="_g_bJcgfCEeqIB8EpHX9WiQ" elementId="org.eclipse.ui.views.TaskList" ref="_g_bK3AfCEeqIB8EpHX9WiQ"/>
@@ -101,7 +100,6 @@
       <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view CommonNavigator.LINKING_ENABLED=&quot;0&quot; currentWorkingSetName=&quot;Aggregate for window 1571985384254&quot; org.eclipse.cdt.ui.cview.groupincludes=&quot;false&quot; org.eclipse.cdt.ui.cview.groupmacros=&quot;false&quot; org.eclipse.cdt.ui.editor.CUChildren=&quot;true&quot; org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets=&quot;0&quot;/>"/>
       <tags>View</tags>
       <tags>categoryTag:General</tags>
-      <tags>activeOnClose</tags>
       <menus xmi:id="_g_bKfgfCEeqIB8EpHX9WiQ" elementId="org.eclipse.ui.navigator.ProjectExplorer">
         <tags>ViewMenu</tags>
         <tags>menuContribution:menu</tags>
@@ -172,6 +170,7 @@
       <tags>View</tags>
       <tags>categoryTag:General</tags>
       <tags>active</tags>
+      <tags>activeOnClose</tags>
       <menus xmi:id="_g_bK4AfCEeqIB8EpHX9WiQ" elementId="org.eclipse.ui.console.ConsoleView">
         <tags>ViewMenu</tags>
         <tags>menuContribution:menu</tags>
@@ -275,7 +274,7 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_g_bwnwfCEeqIB8EpHX9WiQ" elementId="org.eclipse.ui.workbench.file">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_dxvXcAsaEeqUKu67xnQnHA" elementId="print" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.png" tooltip="Print" command="_g_cbogfCEeqIB8EpHX9WiQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_PZfYwA05EeqdUqmTFQVVJQ" elementId="print" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.png" tooltip="Print" command="_g_cbogfCEeqIB8EpHX9WiQ"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_g_bwrQfCEeqIB8EpHX9WiQ" elementId="additions" toBeRendered="false">
         <tags>toolbarSeparator</tags>
@@ -299,7 +298,7 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_g_bw5gfCEeqIB8EpHX9WiQ" elementId="org.eclipse.ui.workbench.navigate">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_dxzB0AsaEeqUKu67xnQnHA" elementId="org.eclipse.ui.window.pinEditor" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.png" tooltip="Pin Editor" type="Check" command="_g_cbFAfCEeqIB8EpHX9WiQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_PZh1AA05EeqdUqmTFQVVJQ" elementId="org.eclipse.ui.window.pinEditor" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.png" tooltip="Pin Editor" type="Check" command="_g_cbFAfCEeqIB8EpHX9WiQ"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_g_bw8AfCEeqIB8EpHX9WiQ" elementId="group.editor" toBeRendered="false">
         <tags>toolbarSeparator</tags>

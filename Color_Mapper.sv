@@ -22,15 +22,15 @@ module  color_mapper ( input              is_ball,            // Whether current
                        output logic [7:0] VGA_R, VGA_G, VGA_B // VGA RGB output
                      );
     
-    logic [7:0] Red, Green, Blue;
+   logic [7:0] Red, Green, Blue;
     
-    // Output colors to VGA
-    assign VGA_R = Red;
-    assign VGA_G = Green;
-    assign VGA_B = Blue;
+   // Output colors to VGA
+   assign VGA_R = Red;
+   assign VGA_G = Green;
+   assign VGA_B = Blue;
     
-    // Assign color based on is_ball signal
-    always_comb begin
+   // Assign color based on is_ball signal
+   always_comb begin
       if (DrawX < 120 || DrawX >= 520 || DrawY < 40 || DrawY >= 440) begin
          Red = 8'h00;
          Green = 8'h00;
@@ -96,6 +96,6 @@ module  color_mapper ( input              is_ball,            // Whether current
             end
          endcase
       end
-    end 
+   end 
     
 endmodule

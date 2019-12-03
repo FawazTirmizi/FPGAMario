@@ -32,23 +32,28 @@ module FPGAMario_toplevel (
                                  DRAM_CLK      //SDRAM Clock
                     );
     
-    logic Reset_h, Clk;
-    logic [7:0] keycode;
+   logic Reset_h, Clk;
+   logic [7:0] keycode;
     
-    logic is_ball;
-	 logic [9:0] DrawX, DrawY;
-    logic frame_clk;
+   logic is_mario;
+	logic [9:0] DrawX, DrawY;
+   logic frame_clk;
 	 
-    logic [2:0] blockID;
+   logic [9:0] Mario_X_Pos, Mario_Y_Pos;
+   logic [2:0] mario_poll_up, mario_poll_down, mario_poll_left, mario_poll_right;
+   logic [9:0] ball_X_poll, ball_Y_poll;
+   logic [2:0] ball_poll_block_id;
     
-	 //assign new_frame = DrawX & DrawY;
+   logic [2:0] blockID;
+    
+	//assign new_frame = DrawX & DrawY;
 	 
-    assign Clk = CLOCK_50;
-    always_ff @ (posedge Clk) begin
-        Reset_h <= ~(KEY[0]);        // The push buttons are active low
-    end
+   assign Clk = CLOCK_50;
+   always_ff @ (posedge Clk) begin
+      Reset_h <= ~(KEY[0]);        // The push buttons are active low
+   end
     
-	 always_comb begin
+	always_comb begin
 		if ((DrawX == 0) && (DrawY == 0))
 			frame_clk = 1'b1;
 		else
@@ -104,22 +109,27 @@ module FPGAMario_toplevel (
                              .otg_hpi_reset_export(hpi_reset)
     );
     
-    // Use PLL to generate the 25MHZ VGA_CLK.
-    // You will have to generate it on your own in simulation.
-    vga_clk vga_clk_instance(.inclk0(Clk), .c0(VGA_CLK));
+   // Use PLL to generate the 25MHZ VGA_CLK.
+   // You will have to generate it on your own in simulation.
+   vga_clk vga_clk_instance(.inclk0(Clk), .c0(VGA_CLK));
     
-    // TODO: Fill in the connections for the rest of the modules 
-    VGA_controller vga_controller_instance(.Clk, .Reset(Reset_h), .VGA_CLK, .VGA_HS, .VGA_VS, .VGA_BLANK_N, .VGA_SYNC_N, .DrawX, .DrawY);
+   // TODO: Fill in the connections for the rest of the modules 
+   VGA_controller vga_controller_instance(.Clk, .Reset(Reset_h), .VGA_CLK, .VGA_HS, .VGA_VS, .VGA_BLANK_N, .VGA_SYNC_N, .DrawX, .DrawY);
     
-    // Which signal should be frame_clk?
-    ball ball_instance(.Clk, .Reset(Reset_h), .frame_clk, .DrawX, .DrawY, .keycode({2'h00, keycode}), .is_ball);
+   // Which signal should be frame_clk?   
+   Mario mario_instance(.Clk, .Reset(Reset_h), .frame_clk, .DrawX, .DrawY, 
+                     .keycode({2'h00, keycode}), .is_mario, 
+                     .Mario_X_Pos, .Mario_Y_Pos,
+                     .mario_poll_up, .mario_poll_down, .mario_poll_left, .mario_poll_right);
     
-    color_mapper color_instance(.is_ball, .DrawX, .DrawY, .VGA_R, .VGA_G, .VGA_B, .blockID);
+   color_mapper color_instance(.is_ball(is_mario), .DrawX, .DrawY, .VGA_R, .VGA_G, .VGA_B, .blockID);
     
-    block_array block_instance(.Clk, .Reset(Reset_h), .drawX(DrawX), .drawY(DrawY), .block_id_out(blockID));
-    
-    // Display keycode on hex display
-    HexDriver hex_inst_0 (keycode[3:0], HEX0);
-    HexDriver hex_inst_1 (keycode[7:4], HEX1);
+   block_array block_instance(.Clk, .Reset(Reset_h), .drawX(DrawX), .drawY(DrawY), .block_id_out(blockID), 
+                              .new_block_id(30'b0), .Mario_X_Pos, .Mario_Y_Pos,
+                              .mario_poll_up, .mario_poll_down, .mario_poll_left, .mario_poll_right);
+   
+   // Display keycode on hex display
+   HexDriver hex_inst_0 (keycode[3:0], HEX0);
+   HexDriver hex_inst_1 (keycode[7:4], HEX1);
     
 endmodule
