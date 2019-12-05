@@ -7,7 +7,8 @@ module block_array (
    input logic [9:0] Mario_X_Pos, Mario_Y_Pos,
    
    output logic [2:0] mario_poll_up, mario_poll_down, mario_poll_left, mario_poll_right,
-   output logic[2:0] block_id_out
+   output logic[2:0] block_id_out,
+   output logic [7:0] current_block_col
 );
 	
 	logic [39:0] 	blockXPixel, blockYPixel;
@@ -24,10 +25,16 @@ module block_array (
    
 	always_ff @ (posedge Clk) begin
 		if (Reset) begin
+         current_block_col = 8'h00;
 			for (int i = 0; i < 10; i++) begin
 				blockCols[i] <= 1'b0;
 			end
          
+         for (int i = 0; i < 10; i++) begin
+            blockCols[i] <= new_block_id;
+            current_block_col++;
+         end
+         /*
          // TESTING ENVIRONMENT; COMMENT OUT WHEN USING MEMORY
          blockCols[6][29:27]  <= 3'b001;   // Draws 3 breakable bricks in a stair
          blockCols[7][29:27]  <= 3'b001;
@@ -35,12 +42,14 @@ module block_array (
          blockCols[0][2:0]    <= 3'b011;     // Draws question block
          blockCols[4][20:18]  <= 3'b110;
          // END TEST
+         */
 		end
 		else if (Shift) begin
 			for (int i = 0; i < 9; i++) begin
 				blockCols[i] <= blockCols[i + 1];
 			end
          blockCols[9] <= new_block_id;
+         current_block_col++;
 		end
 		else begin
 			blockCols <= blockCols;

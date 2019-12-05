@@ -46,6 +46,11 @@ module FPGAMario_toplevel (
     
    logic [2:0] blockID;
     
+   logic [7:0] current_block_col;
+   
+   logic [29:0] new_block_id;
+   logic [5:0] new_col_control;
+   
 	//assign new_frame = DrawX & DrawY;
 	 
    assign Clk = CLOCK_50;
@@ -125,8 +130,11 @@ module FPGAMario_toplevel (
    color_mapper color_instance(.is_ball(is_mario), .DrawX, .DrawY, .VGA_R, .VGA_G, .VGA_B, .blockID);
     
    block_array block_instance(.Clk, .Reset(Reset_h), .drawX(DrawX), .drawY(DrawY), .block_id_out(blockID), 
-                              .new_block_id(30'b0), .Mario_X_Pos, .Mario_Y_Pos, .Shift,
-                              .mario_poll_up, .mario_poll_down, .mario_poll_left, .mario_poll_right);
+                              .new_block_id, .Mario_X_Pos, .Mario_Y_Pos, .Shift,
+                              .mario_poll_up, .mario_poll_down, .mario_poll_left, .mario_poll_right,
+                              .current_block_col);
+   
+   LevelMemory level_memory(.clock(Clk), .address(current_block_col), .q({new_col_control, new_block_id}));
    
    // Display keycode on hex display
    HexDriver hex_inst_0 (keycode[3:0], HEX0);

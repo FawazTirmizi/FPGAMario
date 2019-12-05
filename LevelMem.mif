@@ -1,0 +1,28 @@
+DEPTH = 256;            % Memory depth and width are required %
+                        % DEPTH is the number of addresses %
+WIDTH = 36;             % WIDTH is the number of bits of data per word %
+% DEPTH and WIDTH should be entered as decimal numbers %
+
+ADDRESS_RADIX = DEC;    % Address and value radixes are required %
+DATA_RADIX = BIN;       % Enter BIN, DEC, HEX, OCT, or UNS; unless %
+                        % otherwise specified, radixes = HEX %
+-- Specify values for addresses, which can be single address or range
+CONTENT
+BEGIN
+--[0..F]: 3FFF;           % Range--Every address from 0 to F = 3FFF %
+--6 : F;                  % Single address--Address 6 = F %
+--8 : F E 5;              % Range starting from specific address %
+--                      % Addr[8] = F, Addr[9] = E, Addr[A] = 5 %
+
+-- [35:30] = Config bits
+-- For [29:0] MSB corresponds to lowest block (ground), LSB corresponds to top blocks
+
+[0 .. 255]  : 000000000000000000000000000000000000;
+5           : 000000001000000000110000011111010100;
+6           : 010101001001001101101010010010000000;
+7           : 000000001000000000000000000000000000;
+12          : 000000110110100000000000000000000010;
+13          : 000000111111101000000000000000000101;
+55          : 111111001111111111111111111111111111;
+
+END;
