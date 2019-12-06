@@ -1,12 +1,12 @@
 module goomba (
    input logic Clk, Reset, frame_clk,
-   input logic start, kill,
+   input logic start, kill, Shift,
    input logic [9:0] spawnX, spawnY,
    input logic [9:0] DrawX, DrawY,
    input logic [9:0] Mario_X_Pos, Mario_Y_Pos,
    input logic [2:0] Goomba_poll_left, Goomba_poll_right, // Add down eventually
    
-   
+   output logic isAlive_out,
    output logic [9:0] Goomba_X_Pos, Goomba_Y_Pos,
    output logic draw_is_goomba
    //output logic mario_is_goomba
@@ -29,6 +29,8 @@ module goomba (
 
    logic			Falling, Falling_in;
    logic       isAlive, isAlive_in;
+   
+   assign isAlive_out = isAlive;
    
    // Detect rising edge of frame_clk
    logic frame_clk_delayed, frame_clk_rising_edge;
@@ -70,7 +72,7 @@ module goomba (
       // Nothing changes by default
       Goomba_X_Pos_in = Goomba_X_Pos;
       Goomba_Y_Pos_in = Goomba_Y_Pos;
-      Goomba_X_Motion_in = 10'd0;
+      Goomba_X_Motion_in = Goomba_X_Motion;
       Goomba_Y_Motion_in = 10'd0;
 		Falling_in = Falling;
       isAlive_in = isAlive;
@@ -92,10 +94,15 @@ module goomba (
                if (Goomba_poll_left != 3'b000) begin
                   Goomba_X_Motion_in = Goomba_X_Step;
                end
-               if (Goomba_poll_right != 3'b000) begin
+               if (Goomba_poll_right != 3'b000 || Goomba_X_Pos + Goomba_X_Size >= Goomba_X_Max) begin
                   Goomba_X_Motion_in = (~(Goomba_X_Step) + 1'b1);
                end
-               Goomba_X_Pos_in = Goomba_X_Pos + Goomba_X_Motion;
+               if (Shift) begin
+                  Goomba_X_Pos_in = Goomba_X_Pos - 10'd40;
+               end
+               else begin
+                  Goomba_X_Pos_in = Goomba_X_Pos + Goomba_X_Motion;
+               end
                Goomba_Y_Pos_in = Goomba_Y_Pos + Goomba_Y_Motion;
             end
          end

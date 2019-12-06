@@ -1,7 +1,7 @@
 module FPGAMario_toplevel (
 				input               CLOCK_50,
              input        [3:0]  KEY,          //bit 0 is set up as Reset
-             output logic [6:0]  HEX0, HEX1, HEX3, HEX6, HEX7,
+             output logic [6:0]  HEX0, HEX1, HEX3, HEX4, HEX6, HEX7,
              // VGA Interface 
              output logic [7:0]  VGA_R,        //VGA Red
                                  VGA_G,        //VGA Green
@@ -56,6 +56,8 @@ module FPGAMario_toplevel (
    
    logic [29:0] new_block_id;
    logic [5:0] new_col_control;
+   
+   logic Goomba_isAlive;
    
 	//assign new_frame = DrawX & DrawY;
 	 
@@ -138,7 +140,7 @@ module FPGAMario_toplevel (
    goomba goomba_instance(.Clk, .Reset(Reset_h), .frame_clk, .DrawX, .DrawY, 
                            .start(new_col_control[0]),
                            .spawnX(10'd500), .spawnY(10'd439), .Mario_X_Pos, .Mario_Y_Pos, 
-                           .Goomba_poll_left, .Goomba_poll_right,
+                           .Goomba_poll_left, .Goomba_poll_right, .isAlive_out(Goomba_isAlive),
                            .Goomba_X_Pos, .Goomba_Y_Pos, .draw_is_goomba);
    
    block_array block_instance(.Clk, .Reset(Reset_h), .drawX(DrawX), .drawY(DrawY), .block_id_out(blockID), 
@@ -154,6 +156,8 @@ module FPGAMario_toplevel (
    HexDriver hex_inst_1 (keycode[7:4], HEX1);
    
    HexDriver hex_inst_3 (new_col_control[3:0], HEX3);
+   
+   HexDriver hex_inst_4 (Goomba_isAlive, HEX4);
    
    HexDriver hex_inst_6 (current_block_col[3:0], HEX6);
    HexDriver hex_inst_7 (current_block_col[7:4], HEX7);
