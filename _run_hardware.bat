@@ -9,7 +9,7 @@
 
 @ rem This is the Quartus .sof file (relative path to script directory) to initialize with:
 @ rem Change me to upload a different sof file!
-set QUARTUS_SOF=".\lab8.sof"
+set QUARTUS_SOF=".\output_files\FPGAMario_toplevel.sof"
 
 @ set QUARTUS_BIN=%QUARTUS_ROOTDIR%\bin
 @ if not exist "%QUARTUS_BIN%" set QUARTUS_BIN=%QUARTUS_ROOTDIR%\bin64
