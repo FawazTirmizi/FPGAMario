@@ -5,9 +5,11 @@ module block_array (
    
 	input logic [9:0] drawX, drawY,
    input logic [9:0] Mario_X_Pos, Mario_Y_Pos,
+   input logic [9:0] Goomba_X_Pos, Goomba_Y_Pos,
    
    output logic [2:0] mario_poll_up, mario_poll_down, mario_poll_left, mario_poll_right,
-   output logic[2:0] block_id_out,
+   output logic [2:0] Goomba_poll_left, Goomba_poll_right,
+   output logic [2:0] block_id_out,
    output logic [7:0] current_block_col
 );
 	
@@ -17,6 +19,10 @@ module block_array (
    logic [9:0]    Mario_blockX, Mario_blockY;
    logic [9:0]    Mario_block_up, Mario_block_down, Mario_block_left, Mario_block_right;
    logic [4:0]    Mario_blockY_lower, Mario_block_up_lower, Mario_block_down_lower;
+   
+   logic [9:0]    Goomba_blockX, Goomba_blockY;
+   logic [9:0]    Goomba_block_left, Goomba_block_right;
+   logic [4:0]    Goomba_blockY_lower;
    
 	logic [9:0][29:0] blockCols;
 	
@@ -56,6 +62,7 @@ module block_array (
 		end
 	end
 	
+   // Get block begin drawn
 	always_comb begin
 		// Put modulus math and stuffs to go from pixel to respective block
       blockX = (drawX - 8'h78) / 8'h28;
@@ -65,6 +72,7 @@ module block_array (
       block_id_out = blockCols[blockX][block_Y_lower+:3];
    end
 	
+   // Get blocks adjacent to Mario
    always_comb begin
       // Get the block coordinates of Mario
       Mario_blockX = (Mario_X_Pos - 8'h78) / 8'h28;
@@ -84,5 +92,20 @@ module block_array (
       mario_poll_down   = blockCols[Mario_blockX][Mario_block_down_lower+:3];
       mario_poll_left   = blockCols[Mario_block_left][Mario_blockY_lower+:3];
       mario_poll_right  = blockCols[Mario_block_right][Mario_blockY_lower+:3];
+   end
+   
+   // Get blocks adjacent to Goomba
+   always_comb begin
+      // Get block coords of Goomba
+      Goomba_blockX = (Goomba_X_Pos - 8'h78) / 8'h28;
+      Goomba_blockY = (Goomba_Y_Pos - 8'h28) / 8'h28;
+      Goomba_blockY_lower = 3 * Goomba_blockY;
+      
+      // Get X values of blocks adjacent to Goomba
+      Goomba_block_left  = (Goomba_X_Pos - 10'd18 - 8'h78) / 8'h28;
+      Goomba_block_right = (Goomba_X_Pos + 10'd18 - 8'h78) / 8'h28;    
+
+      Goomba_poll_left   = blockCols[Goomba_block_left][Goomba_blockY_lower+:3];
+      Goomba_poll_right  = blockCols[Goomba_block_right][Goomba_blockY_lower+:3];
    end
 endmodule

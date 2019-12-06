@@ -584,13 +584,13 @@ set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -entity lab8 -section_
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -entity lab8 -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -entity lab8 -section_id Top
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -entity lab8 -section_id Top
+set_global_assignment -name SYSTEMVERILOG_FILE goomba.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Mario.sv
 set_global_assignment -name SYSTEMVERILOG_FILE block_array.sv
 set_global_assignment -name QIP_FILE nios_system/synthesis/nios_system.qip
 set_global_assignment -name SDC_FILE lab8.sdc
 set_global_assignment -name SYSTEMVERILOG_FILE VGA_controller.sv
 set_global_assignment -name SYSTEMVERILOG_FILE tristate.sv
-set_global_assignment -name SYSTEMVERILOG_FILE lab8.sv
 set_global_assignment -name SYSTEMVERILOG_FILE hpi_io_intf.sv
 set_global_assignment -name SYSTEMVERILOG_FILE HexDriver.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Color_Mapper.sv

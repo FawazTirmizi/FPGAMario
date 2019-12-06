@@ -1,7 +1,7 @@
 module FPGAMario_toplevel (
 				input               CLOCK_50,
              input        [3:0]  KEY,          //bit 0 is set up as Reset
-             output logic [6:0]  HEX0, HEX1,
+             output logic [6:0]  HEX0, HEX1, HEX3, HEX6, HEX7,
              // VGA Interface 
              output logic [7:0]  VGA_R,        //VGA Red
                                  VGA_G,        //VGA Green
@@ -35,14 +35,20 @@ module FPGAMario_toplevel (
    logic Reset_h, Clk;
    logic [7:0] keycode;
     
-   logic is_mario, Shift;
+   logic is_mario, draw_is_goomba, Shift;
 	logic [9:0] DrawX, DrawY;
    logic frame_clk;
-	 
+	
+   logic [9:0] spawnX, spawnY;
+   
+   logic [2:0] Goomba_poll_left, Goomba_poll_right;
+   
    logic [9:0] Mario_X_Pos, Mario_Y_Pos;
    logic [2:0] mario_poll_up, mario_poll_down, mario_poll_left, mario_poll_right;
-   logic [9:0] ball_X_poll, ball_Y_poll;
-   logic [2:0] ball_poll_block_id;
+   
+   logic [9:0] Goomba_X_Pos, Goomba_Y_Pos;
+   //logic [9:0] ball_X_poll, ball_Y_poll;
+   //logic [2:0] ball_poll_block_id;
     
    logic [2:0] blockID;
     
@@ -127,11 +133,18 @@ module FPGAMario_toplevel (
                      .Mario_X_Pos, .Mario_Y_Pos,
                      .mario_poll_up, .mario_poll_down, .mario_poll_left, .mario_poll_right);
     
-   color_mapper color_instance(.is_ball(is_mario), .DrawX, .DrawY, .VGA_R, .VGA_G, .VGA_B, .blockID);
-    
+   color_mapper color_instance(.is_mario, .draw_is_goomba, .DrawX, .DrawY, .VGA_R, .VGA_G, .VGA_B, .blockID);
+   
+   goomba goomba_instance(.Clk, .Reset(Reset_h), .frame_clk, .DrawX, .DrawY, 
+                           .start(new_col_control[0]),
+                           .spawnX(10'd500), .spawnY(10'd439), .Mario_X_Pos, .Mario_Y_Pos, 
+                           .Goomba_poll_left, .Goomba_poll_right,
+                           .Goomba_X_Pos, .Goomba_Y_Pos, .draw_is_goomba);
+   
    block_array block_instance(.Clk, .Reset(Reset_h), .drawX(DrawX), .drawY(DrawY), .block_id_out(blockID), 
                               .new_block_id, .Mario_X_Pos, .Mario_Y_Pos, .Shift,
                               .mario_poll_up, .mario_poll_down, .mario_poll_left, .mario_poll_right,
+                              .Goomba_X_Pos, .Goomba_Y_Pos, .Goomba_poll_left, .Goomba_poll_right,
                               .current_block_col);
    
    LevelMemory level_memory(.clock(Clk), .address(current_block_col), .q({new_col_control, new_block_id}));
@@ -139,5 +152,10 @@ module FPGAMario_toplevel (
    // Display keycode on hex display
    HexDriver hex_inst_0 (keycode[3:0], HEX0);
    HexDriver hex_inst_1 (keycode[7:4], HEX1);
+   
+   HexDriver hex_inst_3 (new_col_control[3:0], HEX3);
+   
+   HexDriver hex_inst_6 (current_block_col[3:0], HEX6);
+   HexDriver hex_inst_7 (current_block_col[7:4], HEX7);
     
 endmodule

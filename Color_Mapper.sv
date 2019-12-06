@@ -14,8 +14,9 @@
 //-------------------------------------------------------------------------
 
 // color_mapper: Decide which color to be output to VGA for each pixel.
-module  color_mapper ( input              is_ball,            // Whether current pixel belongs to ball 
+module  color_mapper ( input              is_mario, draw_is_goomba,           // Whether current pixel belongs to ball 
                                                               //   or background (computed in ball.sv)
+                       
                        input        [9:0] DrawX, DrawY,       // Current pixel coordinates
                        input logic [2:0] blockID,
                        
@@ -29,18 +30,23 @@ module  color_mapper ( input              is_ball,            // Whether current
    assign VGA_G = Green;
    assign VGA_B = Blue;
     
-   // Assign color based on is_ball signal
+   // Assign color based on is_mario signal
    always_comb begin
       if (DrawX < 120 || DrawX >= 520 || DrawY < 40 || DrawY >= 440) begin
          Red = 8'h00;
          Green = 8'h00;
          Blue = 8'h00;
       end
-      else if (is_ball == 1'b1) begin
+      else if (is_mario == 1'b1) begin
          // White ball
          Red = 8'hff;
          Green = 8'hff;
          Blue = 8'hff;
+      end
+      else if (draw_is_goomba == 1'b1) begin
+         Red   = 8'h03;
+         Green = 8'hfc;
+         Blue  = 8'hec;
       end
       else if (DrawX % 40 == 0 || DrawY % 40 == 0) begin
          Red = 8'hff;
