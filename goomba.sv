@@ -6,7 +6,7 @@ module goomba (
    input logic [9:0] Mario_X_Pos, Mario_Y_Pos,
    input logic [2:0] Goomba_poll_left, Goomba_poll_right, // Add down eventually
    
-   output logic isAlive_out,
+   output logic isAlive_out, kill_Mario,
    output logic [9:0] Goomba_X_Pos, Goomba_Y_Pos,
    output logic draw_is_goomba
    //output logic mario_is_goomba
@@ -29,6 +29,7 @@ module goomba (
 
    logic			Falling, Falling_in;
    logic       isAlive, isAlive_in;
+   logic       kill_Mario_in;
    
    assign isAlive_out = isAlive;
    
@@ -48,6 +49,7 @@ module goomba (
          Goomba_Y_Motion <= 10'd0;
 			Falling <= 1'b0;
          isAlive <= 1'b0;
+         kill_Mario <= 1'b0;
       end
       else if (start) begin
          Goomba_X_Pos <= spawnX;
@@ -56,6 +58,7 @@ module goomba (
          Goomba_Y_Motion <= 10'd0;
          Falling <= 1'b0;
          isAlive <= 1'b1;
+         kill_Mario <= 1'b0;
       end
       else begin
          Goomba_X_Pos <= Goomba_X_Pos_in;
@@ -64,6 +67,7 @@ module goomba (
          Goomba_Y_Motion <= Goomba_Y_Motion_in;
 			Falling <= Falling_in;
          isAlive <= isAlive_in;
+         kill_Mario <= kill_Mario_in;
       end
    end
    
@@ -76,12 +80,19 @@ module goomba (
       Goomba_Y_Motion_in = 10'd0;
 		Falling_in = Falling;
       isAlive_in = isAlive;
+      kill_Mario_in = kill_Mario;
       
       if (frame_clk_rising_edge) begin
          if (isAlive) begin
+            
+            if ((Goomba_X_Pos - Goomba_X_Size + Goomba_X_Motion == Mario_X_Pos + 10'd20 ||
+               Goomba_X_Pos + Goomba_X_Size + Goomba_X_Motion == Mario_X_Pos - 10'd20) &&
+               Mario_Y_Pos - 10'd20 < Goomba_Y_Pos + Goomba_Y_Size) begin
+               kill_Mario_in = 1'b1;
+            end
             // Check if Mario is directly above (i.e. Goomba gonna get squished)
             if ( Goomba_X_Pos - Goomba_X_Size <= Mario_X_Pos && Mario_X_Pos < Goomba_X_Pos + Goomba_X_Size
-               && Goomba_Y_Pos - Goomba_Y_Size == Mario_Y_Pos - 10'd20 ) begin
+               && Goomba_Y_Pos - Goomba_Y_Size == Mario_Y_Pos + 10'd20 ) begin
                isAlive_in = 1'b0;
             end
             // Check if Goomba walks off screen to the left
@@ -97,6 +108,7 @@ module goomba (
                if (Goomba_poll_right != 3'b000 || Goomba_X_Pos + Goomba_X_Size >= Goomba_X_Max) begin
                   Goomba_X_Motion_in = (~(Goomba_X_Step) + 1'b1);
                end
+               
                if (Shift) begin
                   Goomba_X_Pos_in = Goomba_X_Pos - 10'd40;
                end

@@ -59,11 +59,12 @@ module FPGAMario_toplevel (
    
    logic Goomba_isAlive;
    
+   logic kill_Mario;
 	//assign new_frame = DrawX & DrawY;
 	 
    assign Clk = CLOCK_50;
    always_ff @ (posedge Clk) begin
-      Reset_h <= ~(KEY[0]);        // The push buttons are active low
+      Reset_h <= ~(KEY[0]) || kill_Mario;        // The push buttons are active low
    end
     
 	always_comb begin
@@ -141,7 +142,7 @@ module FPGAMario_toplevel (
                            .start(new_col_control[0]),
                            .spawnX(10'd500), .spawnY(10'd439), .Mario_X_Pos, .Mario_Y_Pos, 
                            .Goomba_poll_left, .Goomba_poll_right, .isAlive_out(Goomba_isAlive),
-                           .Goomba_X_Pos, .Goomba_Y_Pos, .draw_is_goomba);
+                           .Goomba_X_Pos, .Goomba_Y_Pos, .draw_is_goomba, .kill_Mario);
    
    block_array block_instance(.Clk, .Reset(Reset_h), .drawX(DrawX), .drawY(DrawY), .block_id_out(blockID), 
                               .new_block_id, .Mario_X_Pos, .Mario_Y_Pos, .Shift,
