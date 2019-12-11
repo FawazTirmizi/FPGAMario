@@ -20,8 +20,8 @@ module goomba (
    parameter [9:0] Goomba_Y_Max  = 10'd439;     // Bottommost point on the Y axis
    parameter [9:0] Goomba_X_Step = 10'd1;      // Step size on the X axis
    parameter [9:0] Goomba_Y_Step = 10'd1;      // Step size on the Y axis
-   parameter [9:0] Goomba_X_Size = 10'd18;        // Ball size
-   parameter [9:0] Goomba_Y_Size = 10'd10;
+   parameter [9:0] Goomba_X_Size = 10'd20;        // Ball size
+   parameter [9:0] Goomba_Y_Size = 10'd20;
    
    logic [9:0] Mario_below_Y;
    logic [9:0] Goomba_X_Motion, Goomba_Y_Motion;
@@ -87,7 +87,7 @@ module goomba (
             
             if ((Goomba_X_Pos - Goomba_X_Size + Goomba_X_Motion == Mario_X_Pos + 10'd20 ||
                Goomba_X_Pos + Goomba_X_Size + Goomba_X_Motion == Mario_X_Pos - 10'd20) &&
-               Mario_Y_Pos - 10'd20 < Goomba_Y_Pos + Goomba_Y_Size) begin
+               Mario_Y_Pos - 10'd20 <= Goomba_Y_Pos - Goomba_Y_Size) begin
                kill_Mario_in = 1'b1;
             end
             // Check if Mario is directly above (i.e. Goomba gonna get squished)

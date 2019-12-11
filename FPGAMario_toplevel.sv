@@ -136,11 +136,11 @@ module FPGAMario_toplevel (
                      .Mario_X_Pos, .Mario_Y_Pos,
                      .mario_poll_up, .mario_poll_down, .mario_poll_left, .mario_poll_right);
     
-   color_mapper color_instance(.is_mario, .draw_is_goomba, .DrawX, .DrawY, .VGA_R, .VGA_G, .VGA_B, .blockID);
+   color_mapper color_instance(.Clk, .is_mario, .draw_is_goomba, .DrawX, .DrawY, .VGA_R, .VGA_G, .VGA_B, .blockID);
    
    goomba goomba_instance(.Clk, .Reset(Reset_h), .frame_clk, .DrawX, .DrawY, 
                            .start(new_col_control[0]),
-                           .spawnX(10'd500), .spawnY(10'd439), .Mario_X_Pos, .Mario_Y_Pos, 
+                           .spawnX(10'd500), .spawnY(10'd440), .Mario_X_Pos, .Mario_Y_Pos, 
                            .Goomba_poll_left, .Goomba_poll_right, .isAlive_out(Goomba_isAlive),
                            .Goomba_X_Pos, .Goomba_Y_Pos, .draw_is_goomba, .kill_Mario);
    

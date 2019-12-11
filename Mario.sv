@@ -84,7 +84,7 @@ module Mario (
                Mario_Y_Motion_in = (~(Mario_Y_Step) + 1'b1);
             end
          end
-         else if ((Mario_Y_Pos + Mario_Y_Size >= Mario_Y_Max || mario_poll_down != 3'b000)) begin
+         else if ((Mario_Y_Pos + Mario_Y_Size - 1'b1 >= Mario_Y_Max || mario_poll_down != 3'b000)) begin
             Mario_Y_Motion_in = 1'b0;
             Falling_in = 1'b0;
             Jump_Counter_in = 7'b0000000;
