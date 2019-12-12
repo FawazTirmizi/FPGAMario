@@ -95,8 +95,8 @@ module goomba (
       if (frame_clk_rising_edge) begin
          if (isAlive) begin
             // Check if Mario is directly above (i.e. Goomba gonna get squished)
-            if ( (Goomba_X_Pos - Goomba_X_Size) <= Mario_X_Pos && 
-                 (Mario_X_Pos < Goomba_X_Pos + Goomba_X_Size) && 
+            if ( (Goomba_X_Pos - Goomba_X_Size) <= Mario_X_Pos + 10'd5 || 
+                 (Mario_X_Pos - 10'd18 < (Goomba_X_Pos + Goomba_X_Size)) && 
                  (Goomba_Y_Pos - Goomba_Y_Size) == (Mario_Y_Pos + 10'd20)) begin
                isAlive_in = 1'b0;
             end
