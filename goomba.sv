@@ -8,7 +8,7 @@ module goomba (
    
    output logic isAlive_out, kill_Mario,
    output logic [9:0] Goomba_X_Pos, Goomba_Y_Pos,
-   output logic draw_is_goomba
+   output logic draw_is_goomba, goomba_sprite
    //output logic mario_is_goomba
 );
   
@@ -30,6 +30,8 @@ module goomba (
    logic			Falling, Falling_in;
    logic       isAlive, isAlive_in;
    logic       kill_Mario_in;
+   logic       goomba_sprite_in;
+   logic [3:0] sprite_timer, sprite_timer_in;
    
    assign isAlive_out = isAlive;
    
@@ -50,6 +52,8 @@ module goomba (
 			Falling <= 1'b0;
          isAlive <= 1'b0;
          kill_Mario <= 1'b0;
+         goomba_sprite <= 1'b0;
+         sprite_timer <= 4'hF;
       end
       else if (start) begin
          Goomba_X_Pos <= spawnX;
@@ -59,6 +63,8 @@ module goomba (
          Falling <= 1'b0;
          isAlive <= 1'b1;
          kill_Mario <= 1'b0;
+         goomba_sprite <= 1'b0;
+         sprite_timer <= 4'hF;
       end
       else begin
          Goomba_X_Pos <= Goomba_X_Pos_in;
@@ -68,6 +74,8 @@ module goomba (
 			Falling <= Falling_in;
          isAlive <= isAlive_in;
          kill_Mario <= kill_Mario_in;
+         goomba_sprite <= goomba_sprite_in;
+         sprite_timer <= sprite_timer_in;
       end
    end
    
@@ -81,6 +89,8 @@ module goomba (
 		Falling_in = Falling;
       isAlive_in = isAlive;
       kill_Mario_in = kill_Mario;
+      goomba_sprite_in = goomba_sprite;
+      sprite_timer_in = sprite_timer;
       
       if (frame_clk_rising_edge) begin
          if (isAlive) begin
@@ -104,7 +114,15 @@ module goomba (
             end
             // If no reason to kill, keep moving
             else begin
+               // Timing for Goomba's motion
+               if (sprite_timer == 4'hF) begin
+                  goomba_sprite_in = ~goomba_sprite;
+               end
+               sprite_timer_in = sprite_timer + 1'b1;
+               
                isAlive_in = 1'b1;
+               
+               // Check if Goomba collides with anything, and if so turn
                if (Goomba_poll_left != 3'b000) begin
                   Goomba_X_Motion_in = Goomba_X_Step;
                end
@@ -112,7 +130,8 @@ module goomba (
                   Goomba_X_Motion_in = (~(Goomba_X_Step) + 1'b1);
                end
                
-               if (Shift) begin
+               
+               if (Shift) begin // Ensures that Goomba's position is unchanged on screen shift
                   Goomba_X_Pos_in = Goomba_X_Pos - 10'd40 + Goomba_X_Motion;
                end
                else begin

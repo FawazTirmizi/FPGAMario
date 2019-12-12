@@ -35,7 +35,9 @@ module FPGAMario_toplevel (
    logic Reset_h, Clk;
    logic [7:0] keycode;
     
-   logic is_mario, draw_is_goomba, Shift;
+   logic is_mario;
+   logic draw_is_goomba, goomba_sprite;
+   logic Shift;
 	logic [9:0] DrawX, DrawY;
    logic frame_clk;
 	
@@ -45,6 +47,9 @@ module FPGAMario_toplevel (
    
    logic [9:0] Mario_X_Pos, Mario_Y_Pos;
    logic [2:0] mario_poll_up, mario_poll_down, mario_poll_left, mario_poll_right;
+   
+   logic [1:0] run_counter;
+   logic       is_jumping, direction;
    
    logic [9:0] Goomba_X_Pos, Goomba_Y_Pos;
    //logic [9:0] ball_X_poll, ball_Y_poll;
@@ -133,18 +138,20 @@ module FPGAMario_toplevel (
    // Which signal should be frame_clk?   
    Mario mario_instance(.Clk, .Reset(Reset_h), .frame_clk, .DrawX, .DrawY, 
                      .keycode({2'h00, keycode}), .is_mario, .Shift,
-                     .Mario_X_Pos, .Mario_Y_Pos,
+                     .Mario_X_Pos, .Mario_Y_Pos, .run_counter, .is_jumping, .direction,
                      .mario_poll_up, .mario_poll_down, .mario_poll_left, .mario_poll_right);
     
    color_mapper color_instance(.Clk, .is_mario, .draw_is_goomba, .DrawX, .DrawY,
                               .VGA_R, .VGA_G, .VGA_B, .blockID, .Mario_X_Pos, .Mario_Y_Pos,
-                              .Goomba_X_Pos, .Goomba_Y_Pos);
+                              .Goomba_X_Pos, .Goomba_Y_Pos, .goomba_sprite,
+                               .run_counter, .is_jumping, .direction);
    
    goomba goomba_instance(.Clk, .Reset(Reset_h), .frame_clk, .DrawX, .DrawY, 
                            .start(new_col_control[0]), .Shift,
                            .spawnX(10'd500), .spawnY(10'd440), .Mario_X_Pos, .Mario_Y_Pos, 
                            .Goomba_poll_left, .Goomba_poll_right, .isAlive_out(Goomba_isAlive),
-                           .Goomba_X_Pos, .Goomba_Y_Pos, .draw_is_goomba, .kill_Mario);
+                           .Goomba_X_Pos, .Goomba_Y_Pos, .draw_is_goomba, .kill_Mario,
+                           .goomba_sprite);
    
    block_array block_instance(.Clk, .Reset(Reset_h), .drawX(DrawX), .drawY(DrawY), .block_id_out(blockID), 
                               .new_block_id, .Mario_X_Pos, .Mario_Y_Pos, .Shift,

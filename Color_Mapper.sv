@@ -15,7 +15,10 @@
 
 // color_mapper: Decide which color to be output to VGA for each pixel.
 module  color_mapper (  input logic Clk,
-                        input              is_mario, draw_is_goomba,           // Whether current pixel belongs to ball 
+                        input logic is_mario,
+                        input logic [1:0] run_counter,
+                        input logic is_jumping, direction,
+                        input logic draw_is_goomba, goomba_sprite,           // Whether current pixel belongs to ball 
                                                               //   or background (computed in ball.sv)
                        
                         input        [9:0] DrawX, DrawY,       // Current pixel coordinates
@@ -31,7 +34,7 @@ module  color_mapper (  input logic Clk,
    parameter SSWidth = 16'd200;
    parameter SSHeight = 16'd200;
    parameter SpriteLength = 16'd40;
-   
+      
    logic [9:0] PixelX, PixelY;
    logic [2:0] SSXPos, SSYPos; // SpriteSheet X and Y pos of the block to be drawn
    logic [15:0] pixelAddress;
@@ -55,14 +58,47 @@ module  color_mapper (  input logic Clk,
          SSYPos = 3'h3;
       end
       else if (is_mario == 1'b1) begin
-         SSXPos = 3'h1;
-         SSYPos = 3'h0;
+         if (is_jumping) begin
+            SSXPos = 3'h2 + direction;
+            SSYPos = 3'h0;
+         end
+         else begin
+            if (direction == 1'b0) begin // If Mario is facing right
+               SSXPos = 3'h1 + run_counter;
+               if (run_counter != 2'b00) begin
+                  SSYPos = 3'h1;
+               end
+               else begin
+                  SSYPos = 3'h0;
+               end
+            end
+            else begin // If mario is facing left
+               case (run_counter)
+                  2'b00 : begin
+                     SSXPos = 3'h0;
+                     SSYPos = 3'h0;
+                  end
+                  2'b01 : begin
+                     SSXPos = 3'h4;
+                     SSYPos = 3'h0;
+                  end
+                  2'b10 : begin
+                     SSXPos = 3'h0;
+                     SSYPos = 3'h1;
+                  end
+                  2'b11 : begin
+                     SSXPos = 3'h1;
+                     SSYPos = 3'h1;
+                  end
+               endcase
+            end
+         end
          
          PixelX = DrawX - 10'd120 - Mario_X_Pos - 10'd4;
          PixelY = DrawY - 10'd40 - Mario_Y_Pos - 10'd4;
       end
       else if (draw_is_goomba == 1'b1) begin
-         SSXPos = 3'h3;
+         SSXPos = 3'h3 + goomba_sprite;
          SSYPos = 3'h2;
          
          PixelX = DrawX - 10'd120 - Goomba_X_Pos - 10'd4;
@@ -133,6 +169,7 @@ module  color_mapper (  input logic Clk,
       pixelAddress = (SSWidth * SpriteLength * SSYPos) + (SpriteLength * SSXPos) + (PixelX % SpriteLength) + ((PixelY % SpriteLength) * SSWidth);
    end
    
+   // Every clock cycle, get the right color for the palette
    always_ff @ (posedge Clk) begin
       case (pixelPaletteID)
          4'h0 : begin
@@ -222,80 +259,6 @@ module  color_mapper (  input logic Clk,
          end
       endcase
    end
-   /*
-   always_comb begin
-      if (DrawX < 120 || DrawX >= 520 || DrawY < 40 || DrawY >= 440) begin
-         Red = 8'h00;
-         Green = 8'h00;
-         Blue = 8'h00;
-      end
-      else if (is_mario == 1'b1) begin
-         // White Brick Mario
-         Red = 8'hff;
-         Green = 8'hff;
-         Blue = 8'hff;
-      end
-      else if (draw_is_goomba == 1'b1) begin
-         Red   = 8'h03;
-         Green = 8'hfc;
-         Blue  = 8'hec;
-      end
-      else if (DrawX % 40 == 0 || DrawY % 40 == 0) begin
-         Red = 8'hff;
-         Green = 8'h80;
-         Blue = 8'h00;
-      end
-      else begin
-         case (blockID) // Color cases and stuffs
-            3'b000 : begin // Open air, use default background
-               Red = 8'h3f; 
-               Green = 8'h00;
-               Blue = 8'h7f - {1'b0, DrawX[9:3]};
-            end
-            3'b001 : begin // Floor bricks
-               Red = 8'h5e;
-               Green = 8'h3c;
-               Blue = 8'h21;
-            end
-            3'b010 : begin // Breakable bricks
-               Red = 8'h9e;
-               Green = 8'h4d;
-               Blue = 8'h0e;
-            end
-            3'b011 : begin // Question blocks
-               Red = 8'hff;
-               Green = 8'hb7;
-               Blue = 8'h00;
-            end
-            3'b100 : begin // Pipe opening left
-               Red = 8'h22;
-               Green = 8'hff;
-               Blue = 8'h00;
-            end
-            3'b101 : begin // Pipe opening right
-               Red = 8'h10;
-               Green = 8'h75;
-               Blue = 8'h00;
-            end
-            3'b110 : begin // Pipe tubing left
-               Red = 8'h22;
-               Green = 8'h57;
-               Blue = 8'h1a;
-            end
-            3'b111 : begin // Pipe tubing right
-               Red = 8'h75;
-               Green = 8'ha6;
-               Blue = 8'h6d;
-            end
-            default : begin // Should never occur; but use background
-               Red = 8'h3f; 
-               Green = 8'h00;
-               Blue = 8'h7f - {1'b0, DrawX[9:3]};
-            end
-         endcase
-      end
-   end 
-   */
    
    frameRAM spriteSheet(.Clk, .read_address(pixelAddress), .data_Out(pixelPaletteID),
                         .write_address(16'h0000), .we(1'b0));
