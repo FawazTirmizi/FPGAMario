@@ -24,7 +24,7 @@ module block_array (
    logic [9:0]    Goomba_block_left, Goomba_block_right;
    logic [4:0]    Goomba_blockY_lower;
    
-	logic [9:0][29:0] blockCols;
+	logic [9:0][29:0] blockCols, blockCols_in;
 	
    logic [4:0] block_Y_lower, block_Y_upper;
    logic [4:0] ball_block_Y_lower;
@@ -59,7 +59,7 @@ module block_array (
          current_block_col++;
 		end
 		else begin
-			blockCols <= blockCols;
+			blockCols <= blockCols_in;
 		end
 	end
 	
@@ -76,9 +76,9 @@ module block_array (
    // Get blocks adjacent to Mario
    always_comb begin
       // Get the block coordinates of Mario
-      Mario_blockX = (Mario_X_Pos - 8'h78) / 8'h28;
-      Mario_blockY = (Mario_Y_Pos - 8'h28) / 8'h28;
-      Mario_blockY_lower = 3 * Mario_blockY;
+      Mario_blockX         = (Mario_X_Pos - 8'h78) / 8'h28;
+      Mario_blockY         = (Mario_Y_Pos - 8'h28) / 8'h28;
+      Mario_blockY_lower   = 3 * Mario_blockY;
       
       // Get the Y or X value of the block in whatever direction 
       Mario_block_up    = (Mario_Y_Pos - 10'd20 - 8'h28) / 8'h28;
@@ -86,13 +86,17 @@ module block_array (
       Mario_block_left  = (Mario_X_Pos - 10'd20 - 8'h78) / 8'h28;
       Mario_block_right = (Mario_X_Pos + 10'd20 - 8'h78) / 8'h28;
       
-      Mario_block_up_lower = 3 * Mario_block_up;
-      Mario_block_down_lower = 3 * Mario_block_down;
+      Mario_block_up_lower    = 3 * Mario_block_up;
+      Mario_block_down_lower  = 3 * Mario_block_down;
       
       mario_poll_up     = blockCols[Mario_blockX][Mario_block_up_lower+:3];
       mario_poll_down   = blockCols[Mario_blockX][Mario_block_down_lower+:3];
       mario_poll_left   = blockCols[Mario_block_left][Mario_blockY_lower+:3];
       mario_poll_right  = blockCols[Mario_block_right][Mario_blockY_lower+:3];
+      
+      blockCols_in = blockCols;
+      if (mario_poll_up == 3'b010)
+         blockCols_in[Mario_blockX][Mario_block_up_lower+:3] = 3'b000;
    end
    
    // Get blocks adjacent to Goomba
