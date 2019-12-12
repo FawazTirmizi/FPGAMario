@@ -19,7 +19,7 @@ module  color_mapper (  input logic Clk,
                                                               //   or background (computed in ball.sv)
                        
                         input        [9:0] DrawX, DrawY,       // Current pixel coordinates
-                        input logic [9:0] MarioXTL, MarioYTL, GoombaXTL, GoombaYTL, // Gets the top left X and Y coords of Mario & Goomba
+                        input logic [9:0] Mario_X_Pos, Mario_Y_Pos, Goomba_X_Pos, Goomba_Y_Pos, // Gets the X and Y coords of Mario & Goomba
                         input logic [2:0] blockID,
                        
                         output logic [7:0] VGA_R, VGA_G, VGA_B // VGA RGB output
@@ -43,6 +43,9 @@ module  color_mapper (  input logic Clk,
     
    // Assign color based on is_mario signal
    always_comb begin
+      PixelX = DrawX - 10'd120;
+      PixelY = DrawY - 10'd40;
+      
       if (DrawX < 10'd120 || DrawX >= 10'd520 || DrawY < 10'd40) begin
          SSXPos = 3'h0;
          SSYPos = 3'h4;
@@ -54,10 +57,16 @@ module  color_mapper (  input logic Clk,
       else if (is_mario == 1'b1) begin
          SSXPos = 3'h1;
          SSYPos = 3'h0;
+         
+         PixelX = DrawX - 10'd120 - Mario_X_Pos - 10'd4;
+         PixelY = DrawY - 10'd40 - Mario_Y_Pos - 10'd4;
       end
       else if (draw_is_goomba == 1'b1) begin
          SSXPos = 3'h3;
          SSYPos = 3'h2;
+         
+         PixelX = DrawX - 10'd120 - Goomba_X_Pos - 10'd4;
+         PixelY = DrawY - 10'd40 - Goomba_Y_Pos - 10'd4;
       end
       /*
       else if (DrawX % 40 == 0 || DrawY % 40 == 0) begin
@@ -120,8 +129,6 @@ module  color_mapper (  input logic Clk,
          PixelY = DrawY;
       end
       */
-      PixelX = DrawX;
-      PixelY = DrawY;
       
       pixelAddress = (SSWidth * SpriteLength * SSYPos) + (SpriteLength * SSXPos) + (PixelX % SpriteLength) + ((PixelY % SpriteLength) * SSWidth);
    end

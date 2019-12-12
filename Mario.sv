@@ -11,14 +11,14 @@ module Mario (
 
    parameter [9:0] Mario_X_Center   = 10'd320;  // Center position on the X axis
    parameter [9:0] Mario_Y_Center   = 10'd240;  // Center position on the Y axis
-   parameter [9:0] Mario_X_Min      = 10'd120;     // Leftmost point on the X axis
-   parameter [9:0] Mario_X_Max      = 10'd519;     // Rightmost point on the X axis
-   parameter [9:0] Mario_Y_Min      = 10'd40;      // Topmost point on the Y axis
-   parameter [9:0] Mario_Y_Max      = 10'd439;     // Bottommost point on the Y axis
-   parameter [9:0] Mario_X_Step     = 10'd2;      // Step size on the X axis
-   parameter [9:0] Mario_Y_Step     = 10'd2;      // Step size on the Y axis
-   parameter [9:0] Mario_X_Size     = 10'd20;        // Ball size
-   parameter [9:0] Mario_Y_Size     = 10'd20;
+   parameter [9:0] Mario_X_Min      = 10'd120;  // Leftmost point on the X axis
+   parameter [9:0] Mario_X_Max      = 10'd519;  // Rightmost point on the X axis
+   parameter [9:0] Mario_Y_Min      = 10'd40;   // Topmost point on the Y axis
+   parameter [9:0] Mario_Y_Max      = 10'd439;  // Bottommost point on the Y axis
+   parameter [9:0] Mario_X_Step     = 10'd2;    // Step size on the X axis
+   parameter [9:0] Mario_Y_Step     = 10'd2;    // Step size on the Y axis
+   parameter [9:0] Mario_X_Size     = 10'd20;   // Mario width
+   parameter [9:0] Mario_Y_Size     = 10'd20;   // Mario height
     
    logic [9:0] Mario_X_Motion, Mario_Y_Motion;
    logic [9:0] Mario_X_Pos_in, Mario_X_Motion_in, Mario_Y_Pos_in, Mario_Y_Motion_in;

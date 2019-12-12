@@ -32,12 +32,13 @@ module block_array (
 	always_ff @ (posedge Clk) begin
 		if (Reset) begin
          current_block_col = 8'h00;
-			for (int i = 0; i < 10; i++) begin
+			/*
+         for (int i = 0; i < 10; i++) begin
 				blockCols[i] <= 1'b0;
 			end
-         
+         */
          for (int i = 0; i < 10; i++) begin
-            blockCols[i] <= new_block_id;
+            blockCols[i] = new_block_id;
             current_block_col++;
          end
          /*
@@ -81,7 +82,7 @@ module block_array (
       
       // Get the Y or X value of the block in whatever direction 
       Mario_block_up    = (Mario_Y_Pos - 10'd20 - 8'h28) / 8'h28;
-      Mario_block_down  = (Mario_Y_Pos + 10'd20 - 8'h28) / 8'h28;
+      Mario_block_down  = (Mario_Y_Pos + 10'd20 - 8'h28 + 10'd1) / 8'h28;
       Mario_block_left  = (Mario_X_Pos - 10'd20 - 8'h78) / 8'h28;
       Mario_block_right = (Mario_X_Pos + 10'd20 - 8'h78) / 8'h28;
       
@@ -102,7 +103,7 @@ module block_array (
       Goomba_blockY_lower = 3 * Goomba_blockY;
       
       // Get X values of blocks adjacent to Goomba
-      Goomba_block_left  = (Goomba_X_Pos - 10'd18 - 8'h78) / 8'h28;
+      Goomba_block_left  = (Goomba_X_Pos - 10'd18 - 8'h78 - 10'd1) / 8'h28;
       Goomba_block_right = (Goomba_X_Pos + 10'd18 - 8'h78) / 8'h28;    
 
       Goomba_poll_left   = blockCols[Goomba_block_left][Goomba_blockY_lower+:3];
