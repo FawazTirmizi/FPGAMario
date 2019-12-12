@@ -83,7 +83,7 @@ module Mario (
       //Mario_X_poll = Mario_X_Pos;
       //Mario_Y_poll = Mario_Y_Pos;
       
-      // If we're at the rising edge things get funky
+      // If we're at the rising edge stuff happens
       if (frame_clk_rising_edge) begin
          // If W is pressed, Mario isn't falling nor jumping, and the block above is empty, begin jumping
          if (keycode == 16'h001A && Falling == 1'b0 && Jump_Counter == 1'b0 && mario_poll_up == 3'b000) begin
@@ -95,7 +95,7 @@ module Mario (
          else if (Jump_Counter >= 7'b0000001) begin
             is_jumping_in = 1'b1;
             // If he's hit a ceiling or he's jumped max height, start falling
-            if (Jump_Counter == 7'b1111111 || Mario_Y_Pos - Mario_Y_Size <= Mario_Y_Min || mario_poll_up != 3'b000) begin // If the jump counter has maxed, begin falling
+            if (Jump_Counter == 7'b1001111 || Mario_Y_Pos - Mario_Y_Size <= Mario_Y_Min || mario_poll_up != 3'b000) begin // If the jump counter has maxed, begin falling
                Mario_Y_Motion_in = Mario_Y_Step;
                Falling_in = 1'b1;
                Jump_Counter_in = 7'b0000000;
@@ -157,10 +157,10 @@ module Mario (
             run_counter_in = 2'b0;
          end
          
-         // If S is pressed, we don't care
          
          Mario_Y_Pos_in = Mario_Y_Pos + Mario_Y_Motion_in;
          
+         // Mario will only move to the right if he's not at the middle
          if (Mario_X_Pos + 10'd21 > (Mario_X_Max + Mario_X_Min) / 2) begin
             Mario_X_Pos_in = Mario_X_Pos - 10'd40;
             Shift = 1'b1;
