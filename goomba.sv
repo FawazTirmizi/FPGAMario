@@ -100,25 +100,17 @@ module goomba (
       if (frame_clk_rising_edge) begin
          if (isAlive) begin
             // Check if Mario is directly above (i.e. Goomba gonna get squished)
-            /*
-            if ( ((Goomba_X_Pos - Goomba_X_Size) <= Mario_X_Pos + 10'd5 || 
-                 (Mario_X_Pos - 10'd18 < (Goomba_X_Pos + Goomba_X_Size))) && 
-                 (Goomba_Y_Pos - Goomba_Y_Size) == (Mario_Y_Pos + 10'd20)) begin
-               isAlive_in = 1'b0;
-               goomba_killed_in = 1'b1;
-            end */
             if ( Goomba_X_Pos - Goomba_X_Size <= Mario_X_Pos && Mario_X_Pos < Goomba_X_Pos + Goomba_X_Size
                && Goomba_Y_Pos - Goomba_Y_Size <= Mario_Y_Pos + 10'd20) begin
-               isAlive_in = 1'b0;
-               goomba_killed_in = 1'b1;
+               isAlive_in = 1'b0; // Kill Goomba
+               goomba_killed_in = 1'b1; // Give points
             end
             // Check if Goomba can kill Mario
             else if ((Goomba_X_Pos - Goomba_X_Size == Mario_X_Pos + 10'd20 ||
                Goomba_X_Pos + Goomba_X_Size == Mario_X_Pos - 10'd20) &&
                (Mario_Y_Pos + 10'd20 > Goomba_Y_Pos - Goomba_Y_Size)) begin
-               kill_Mario_in = 1'b1;
+               kill_Mario_in = 1'b1; // Kill Mario; reset game
             end
-            
             // Check if Goomba walks off screen to the left
             else if (Goomba_X_Pos + Goomba_X_Size < Goomba_X_Min) begin
                isAlive_in = 1'b0;
@@ -151,7 +143,7 @@ module goomba (
                Goomba_Y_Pos_in = Goomba_Y_Pos + Goomba_Y_Motion;
             end
          end
-         else begin
+         else begin // If Goomba isn't alive, do nothing
             Goomba_X_Pos_in = 10'd0;
             Goomba_Y_Pos_in = 10'd0;
             Goomba_X_Motion_in = 10'd0;

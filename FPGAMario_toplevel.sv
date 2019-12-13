@@ -34,38 +34,37 @@ module FPGAMario_toplevel (
     
    logic Reset_h, Clk;
    logic [7:0] keycode;
-    
-   logic is_mario;
-   logic draw_is_goomba, goomba_sprite;
+   
+   logic [9:0] DrawX, DrawY;
+
    logic Shift;
-	logic [9:0] DrawX, DrawY;
+	
    logic frame_clk;
 	
-   logic [9:0] spawnX, spawnY;
-   
-   logic [2:0] Goomba_poll_left, Goomba_poll_right;
    
    logic [9:0] Mario_X_Pos, Mario_Y_Pos;
    logic [2:0] mario_poll_up, mario_poll_down, mario_poll_left, mario_poll_right;
-   
    logic [1:0] run_counter;
    logic       is_jumping, direction;
+   logic       is_mario;
    
    logic [9:0] Goomba_X_Pos, Goomba_Y_Pos;
-   //logic [9:0] ball_X_poll, ball_Y_poll;
-   //logic [2:0] ball_poll_block_id;
-    
+   logic       draw_is_goomba, goomba_sprite;
+   logic       Goomba_isAlive, goomba_killed;
+   logic [2:0] Goomba_poll_left, Goomba_poll_right;
+   logic [9:0] spawnX, spawnY;
+
+
    logic [2:0] blockID;
     
-   logic [7:0] current_block_col;
+   logic [7:0] current_block_col; // Address of what column we're getting from memory
    
-   logic [29:0] new_block_id;
-   logic [5:0] new_col_control;
-   
-   logic Goomba_isAlive, goomba_killed;
-   
+   logic [29:0] new_block_id; // Incoming block column
+   logic [5:0] new_col_control; // Control bits accompanying incoming block column
+      
    logic kill_Mario;
    
+   // Scoring control
    logic [3:0] coin_taken, is_coin;
    logic [7:0] score;
 	always_ff @ (posedge Clk) begin
@@ -73,7 +72,7 @@ module FPGAMario_toplevel (
    end
    
    
-   
+   // Coin control
    logic [3:0] start_coin;
    always_ff @ (posedge Clk) begin
       if (new_col_control[5] == 1'b1) begin

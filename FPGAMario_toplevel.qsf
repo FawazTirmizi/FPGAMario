@@ -597,7 +597,6 @@ set_global_assignment -name SYSTEMVERILOG_FILE tristate.sv
 set_global_assignment -name SYSTEMVERILOG_FILE hpi_io_intf.sv
 set_global_assignment -name SYSTEMVERILOG_FILE HexDriver.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Color_Mapper.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ball.sv
 set_global_assignment -name VERILOG_FILE vga_clk.v
 set_global_assignment -name SYSTEMVERILOG_FILE FPGAMario_toplevel.sv
 set_global_assignment -name QIP_FILE LevelMemory.qip

@@ -32,11 +32,7 @@ module block_array (
 	always_ff @ (posedge Clk) begin
 		if (Reset) begin
          current_block_col = 8'h00;
-			/*
-         for (int i = 0; i < 10; i++) begin
-				blockCols[i] <= 1'b0;
-			end
-         */
+
          for (int i = 0; i < 10; i++) begin
             blockCols[i] = new_block_id;
             current_block_col++;
@@ -51,6 +47,7 @@ module block_array (
          // END TEST
          */
 		end
+      // If we need to shift, shift all columns by 1 and load a new one in
 		else if (Shift) begin
 			for (int i = 0; i < 9; i++) begin
 				blockCols[i] <= blockCols[i + 1];
@@ -58,25 +55,26 @@ module block_array (
          blockCols[9] <= new_block_id;
          current_block_col++;
 		end
+      // If nothing else, simply continue and delete a block Mario hits if necessary.
 		else begin
+         blockCols = blockCols_in;
          if (mario_poll_up == 3'b010)
             blockCols[Mario_blockX][Mario_block_up_lower+:3] = 3'b000;
-			blockCols = blockCols_in;
 		end
 	end
 	
    // Get block begin drawn
 	always_comb begin
-		// Put modulus math and stuffs to go from pixel to respective block
+		// Gets location of block being drawn
       blockX = (drawX - 8'h78) / 8'h28;
       blockY = (drawY - 8'h28) / 8'h28;
       block_Y_lower = 3 * blockY;
-      //block_Y_upper = (3 * (blockY + 1)) - 1;
       block_id_out = blockCols[blockX][block_Y_lower+:3];
    end
 	
    // Get blocks adjacent to Mario
    always_comb begin
+      // TODO: Expand to check both sides of each of Mario's corners, prevent all clipping
       // Get the block coordinates of Mario
       Mario_blockX         = (Mario_X_Pos - 8'h78) / 8'h28;
       Mario_blockY         = (Mario_Y_Pos - 8'h28) / 8'h28;
@@ -84,13 +82,14 @@ module block_array (
       
       // Get the Y or X value of the block in whatever direction 
       Mario_block_up    = (Mario_Y_Pos - 10'd20 - 8'h28) / 8'h28;
-      Mario_block_down  = (Mario_Y_Pos + 10'd20 - 8'h28) / 8'h28;
+      Mario_block_down  = (Mario_Y_Pos + 10'd20 - 8'h28 - 1'b1) / 8'h28;
       Mario_block_left  = (Mario_X_Pos - 10'd20 - 8'h78) / 8'h28;
       Mario_block_right = (Mario_X_Pos + 10'd20 - 8'h78) / 8'h28;
       
       Mario_block_up_lower    = 3 * Mario_block_up;
       Mario_block_down_lower  = 3 * Mario_block_down;
       
+      // Get the blockIDs of whatever is directly next to Mario in all directions
       mario_poll_up     = blockCols[Mario_blockX][Mario_block_up_lower+:3];
       mario_poll_down   = blockCols[Mario_blockX][Mario_block_down_lower+:3];
       mario_poll_left   = blockCols[Mario_block_left][Mario_blockY_lower+:3];

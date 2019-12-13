@@ -50,15 +50,17 @@ module  color_mapper (  input logic Clk,
       PixelX = DrawX - 10'd120;
       PixelY = DrawY - 10'd40;
       
+      // Draw the empty ? blocks as walls, as they're otherwise unused
       if (DrawX < 10'd120 || DrawX >= 10'd520 || DrawY < 10'd40) begin
          SSXPos = 3'h0;
          SSYPos = 3'h4;
       end
+      // Draw the floor bricks for the floor
       else if (DrawY >= 10'd440) begin
          SSXPos = 3'h2;
          SSYPos = 3'h3;
       end
-      else if (is_mario == 1'b1) begin
+      else if (is_mario == 1'b1) begin // Uses logic from Mario to determine which sprite to use
          if (is_jumping) begin
             SSXPos = 3'h2 + direction;
             SSYPos = 3'h0;
@@ -95,7 +97,7 @@ module  color_mapper (  input logic Clk,
             end
          end
          
-         PixelX = DrawX - 10'd120 - Mario_X_Pos - 10'd4;
+         PixelX = DrawX - 10'd120 - Mario_X_Pos - 10'd4; // Ensures that Mario's sprite is set propery
          PixelY = DrawY - 10'd40 - Mario_Y_Pos - 10'd4;
       end
       else if (draw_is_goomba == 1'b1) begin
@@ -109,15 +111,8 @@ module  color_mapper (  input logic Clk,
          SSXPos = 3'h0;
          SSYPos = 3'h3;
       end
-      /*
-      else if (DrawX % 40 == 0 || DrawY % 40 == 0) begin
-         Red = 8'hff;
-         Green = 8'h80;
-         Blue = 8'h00;
-      end
-      */
       else begin
-         case (blockID) // Color cases and stuffs
+         case (blockID) // Selects appropriate sprite for blockID
             3'b000 : begin // Open air, use default background
                SSXPos = 3'h4;
                SSYPos = 3'h4;
@@ -156,28 +151,13 @@ module  color_mapper (  input logic Clk,
             end
          endcase
       end
-      /*
-      if (DrawX > 10'd120) begin
-         PixelX = DrawX - 10'd120;
-      end
-      else begin
-         PixelX = DrawX;
-      end
-      if (DrawY > 10'd40) begin
-         PixelY = DrawY - 10'd40;
-      end
-      else begin
-         PixelY = DrawY;
-      end
-      */
-      
       pixelAddress = (SSWidth * SpriteLength * SSYPos) + (SpriteLength * SSXPos) + (PixelX % SpriteLength) + ((PixelY % SpriteLength) * SSWidth);
    end
    
-   // Every clock cycle, get the right color for the palette
+   // Every clock cycle, get the right color from the palette based on the ID
    always_ff @ (posedge Clk) begin
       case (pixelPaletteID)
-         4'h0 : begin
+         4'h0 : begin // If it's the extra color, use the sky
             Red   = 8'h0A;
             Green = 8'hB1;
             Blue  = 8'hFF;
@@ -242,22 +222,22 @@ module  color_mapper (  input logic Clk,
             Green = 8'h00;
             Blue  = 8'h00;
          end
-         4'hD : begin
+         4'hD : begin // Draws Pink if we get an invalid palette ID
             Red   = 8'hFF;
             Green = 8'h00;
             Blue  = 8'hFF;
          end
-         4'hE : begin
+         4'hE : begin // Draws Pink if we get an invalid palette ID
             Red   = 8'hFF;
             Green = 8'h00;
             Blue  = 8'hFF;
          end
-         4'hF : begin
+         4'hF : begin // Draws Pink if we get an invalid palette ID
             Red   = 8'hFF;
             Green = 8'h00;
             Blue  = 8'hFF;
          end
-         default : begin
+         default : begin // Defaults to the sky
             Red   = 8'h0A;
             Green = 8'hB1;
             Blue  = 8'hFF;
@@ -265,6 +245,7 @@ module  color_mapper (  input logic Clk,
       endcase
    end
    
+   // spriteSheet ram, sourced from Rishi's ECE 385 Helper tools
    frameRAM spriteSheet(.Clk, .read_address(pixelAddress), .data_Out(pixelPaletteID),
                         .write_address(16'h0000), .we(1'b0));
     

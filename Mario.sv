@@ -30,7 +30,7 @@ module Mario (
    logic       is_jumping_in, direction_in;
    logic [1:0] run_counter_in;
    logic [3:0] run_sprite_timer, run_sprite_timer_in;
-   
+      
    // Detect rising edge of frame_clk
    logic frame_clk_delayed, frame_clk_rising_edge;
    always_ff @ (posedge Clk) begin
@@ -41,16 +41,16 @@ module Mario (
    // Register updating and stuffs
    always_ff @ (posedge Clk) begin
       if (Reset) begin
-         Mario_X_Pos    <= (Mario_X_Min + 10'd20);
-         Mario_Y_Pos    <= Mario_Y_Max - Mario_Y_Size;
-         Mario_X_Motion <= 10'd0;
-         Mario_Y_Motion <= 10'd0;
-			Falling        <= 1'b0;
-			Jump_Counter   <= 1'b0;
-         run_counter    <= 2'b0;
-         is_jumping     <= 1'b0;
-         direction      <= 1'b0;
-         run_sprite_timer <= 4'hF;
+         Mario_X_Pos       <= (Mario_X_Min + 10'd20);
+         Mario_Y_Pos       <= Mario_Y_Max - Mario_Y_Size;
+         Mario_X_Motion    <= 10'd0;
+         Mario_Y_Motion    <= 10'd0;
+			Falling           <= 1'b0;
+			Jump_Counter      <= 1'b0;
+         run_counter       <= 2'b0;
+         is_jumping        <= 1'b0;
+         direction         <= 1'b0;
+         run_sprite_timer  <= 4'hF;
       end
       else begin
          Mario_X_Pos    <= Mario_X_Pos_in;
@@ -95,7 +95,7 @@ module Mario (
          else if (Jump_Counter >= 7'b0000001) begin
             is_jumping_in = 1'b1;
             // If he's hit a ceiling or he's jumped max height, start falling
-            if (Jump_Counter == 7'b1001111 || Mario_Y_Pos - Mario_Y_Size <= Mario_Y_Min || mario_poll_up != 3'b000) begin // If the jump counter has maxed, begin falling
+            if (Jump_Counter == 7'b1011111 || Mario_Y_Pos - Mario_Y_Size <= Mario_Y_Min || mario_poll_up != 3'b000) begin // If the jump counter has maxed, begin falling
                Mario_Y_Motion_in = Mario_Y_Step;
                Falling_in = 1'b1;
                Jump_Counter_in = 7'b0000000;
