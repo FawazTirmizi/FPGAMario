@@ -59,7 +59,9 @@ module block_array (
          current_block_col++;
 		end
 		else begin
-			blockCols <= blockCols_in;
+         if (mario_poll_up == 3'b010)
+            blockCols[Mario_blockX][Mario_block_up_lower+:3] = 3'b000;
+			blockCols = blockCols_in;
 		end
 	end
 	
@@ -82,7 +84,7 @@ module block_array (
       
       // Get the Y or X value of the block in whatever direction 
       Mario_block_up    = (Mario_Y_Pos - 10'd20 - 8'h28) / 8'h28;
-      Mario_block_down  = (Mario_Y_Pos + 10'd20 - 8'h28 + 10'd1) / 8'h28;
+      Mario_block_down  = (Mario_Y_Pos + 10'd20 - 8'h28) / 8'h28;
       Mario_block_left  = (Mario_X_Pos - 10'd20 - 8'h78) / 8'h28;
       Mario_block_right = (Mario_X_Pos + 10'd20 - 8'h78) / 8'h28;
       
@@ -95,8 +97,9 @@ module block_array (
       mario_poll_right  = blockCols[Mario_block_right][Mario_blockY_lower+:3];
       
       blockCols_in = blockCols;
-      if (mario_poll_up == 3'b010)
-         blockCols_in[Mario_blockX][Mario_block_up_lower+:3] = 3'b000;
+      
+      //if (mario_poll_up == 3'b010)
+      //   blockCols_in[Mario_blockX][Mario_block_up_lower+:3] = 3'b000;
    end
    
    // Get blocks adjacent to Goomba
