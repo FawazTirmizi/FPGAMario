@@ -18,6 +18,7 @@ module  color_mapper (  input logic Clk,
                         input logic is_mario,
                         input logic [1:0] run_counter,
                         input logic is_jumping, direction,
+                        input logic [3:0] is_coin,
                         input logic draw_is_goomba, goomba_sprite,           // Whether current pixel belongs to ball 
                                                               //   or background (computed in ball.sv)
                        
@@ -103,6 +104,10 @@ module  color_mapper (  input logic Clk,
          
          PixelX = DrawX - 10'd120 - Goomba_X_Pos - 10'd4;
          PixelY = DrawY - 10'd40 - Goomba_Y_Pos - 10'd4;
+      end
+      else if (is_coin != 4'h0) begin
+         SSXPos = 3'h0;
+         SSYPos = 3'h3;
       end
       /*
       else if (DrawX % 40 == 0 || DrawY % 40 == 0) begin
