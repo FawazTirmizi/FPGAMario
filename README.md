@@ -1,18 +1,6 @@
 # FPGAMario
 A Mario-like game built to run on an Altera DE2-115 board for the ECE 385 final project
 
-## TODO:
-### Items of immediate and ordered importance
-1. Get initial VGA setup working (use Lab 8 files to do this)
-2. Create first itereation of basic movement
-3. Set up level loading system
-4. 
+Completed 12/12/2019
 
-### Items which can be done in any order
-- Proper graphics
-- 2 player support
-- Audio
-- Controller support
-- Smooth movement
-- Enemies
-
+As the name implies, this is a simple version of Mario built almost entirely in SystemVerilog. Only USB I/O, which is used for the keyboard inputs, is done in C code. Some of the notable features include sprites, animations, and goombas. The game can be seen on a VGA monitor, and most keyboards ought to suffice for user input.
